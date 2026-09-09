@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kebun Kata — Belajar Inggris & Arab</title>
+  <meta name="description" content="Sentuh, dengarkan, dan cocokkan nama buah dalam bahasa Inggris dan Arab.">
+  <link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app">
+    <header><a class="brand" href="./"><b>🌱 Kebun<span>Kata</span></b><small>TUMBUH BERSAMA KATA</small></a><button id="guide">? <em>Panduan</em></button></header>
+    <section class="top"><span>🍃 KELOMPOK 01 / BUAH-BUAHAN</span><div><button id="en" class="lang active">Aa Inggris</button><button id="ar" class="lang">ع Arab</button></div></section>
+    <section class="progress"><div><i id="bar"></i></div><strong>⭐ <b id="score">0</b><small>/ 6</small></strong></section>
+    <section id="play"><div class="intro"><span>PETUALANGAN KECIL, KATA BARU</span><h1 id="title">Yuk, kenalan dengan buah!</h1><b id="round">Buah 1 dari 6</b></div>
+      <article class="card"><section class="picture"><small id="number">01</small><p>🎧 Sentuh & dengarkan</p><button id="fruit"><img id="fruit-image" alt="Anggur"><i>🔊</i></button><h2 id="label">Ini buah apa, ya?</h2><em id="sub">Sentuh gambar untuk mendengar</em></section>
+      <section class="action"><div class="steps"><b id="step1">1 Dengarkan</b><span></span><b id="step2">2 Cocokkan</b></div><div id="learn"><div class="listen">🔊</div><h2>Dengar dulu,<br>lalu tirukan.</h2><p>Sentuh gambar buah. Kamu boleh mendengarnya berkali-kali.</p><button id="start" disabled>Ayo, tebak suaranya →</button><small id="note">Dengarkan sampai selesai, lalu lanjut.</small></div>
+      <div id="quiz" hidden><h2>Dengarkan. Pilih. Cocokkan!</h2><p>Sentuh tombol untuk mendengar, lalu geser ke kotak.</p><div id="options"></div><button id="drop"><i>🎧</i><b>Taruh suaramu di sini</b><small>Geser tombol suara ke kotak ini</small></button><button id="next" hidden>Kata berikutnya →</button><p class="hint">Bisa juga: ketuk suara, lalu ketuk kotak.</p></div></section></article>
+      <footer>✨ Pelan-pelan saja. Yang penting mencoba! <span id="dots"></span></footer>
+    </section>
+    <section id="complete" hidden><div>⭐</div><p>KEBUN KATAMU BERTUMBUH!</p><h1>Hebat, kamu sudah belajar<br>6 nama buah!</h1><button id="again">↻ Main lagi</button></section>
+  </main>
+  <dialog id="dialog"><button id="close">×</button><h2>Panduan teman belajar</h2><ol><li>Sentuh gambar dan dengarkan kata.</li><li>Dengarkan tiga pilihan suara.</li><li>Geser pilihan yang tepat ke kotak.</li><li>Setiap jawaban benar membuka buah berikutnya.</li></ol><button id="okay">Yuk, bermain</button></dialog>
+  <script src="./app.js"></script>
+</body></html>
