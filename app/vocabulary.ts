@@ -1,3 +1,5 @@
+import { translations } from './translations';
+
 export type VocabularyTheme = { id: string; title: string; emoji: string; words: string[] };
 
 export const vocabularyThemes: VocabularyTheme[] = [
@@ -15,3 +17,17 @@ export const vocabularyThemes: VocabularyTheme[] = [
 ];
 
 export const vocabularyCount = vocabularyThemes.reduce((sum, theme) => sum + theme.words.length, 0);
+
+export type Word = { id: string; idn: string; en: string; ar: string; image: string; tint: string };
+export type LessonTheme = Omit<VocabularyTheme, 'words'> & { words: Word[] };
+const tints = ['#f0e9fa', '#fff0d8', '#e8f3dc', '#ffebeb', '#e7efff'];
+
+export const lessonThemes: LessonTheme[] = vocabularyThemes.map(theme => ({
+  ...theme,
+  words: theme.words.map((idn, index) => {
+    const translation = translations[theme.id]?.[index];
+    if (!translation) throw new Error(`Missing translation: ${theme.id}/${index}`);
+    const id = `${theme.id}-${String(index + 1).padStart(2, '0')}`;
+    return { id, idn, en: translation[0], ar: translation[1], image: `/vocabulary/${id}.webp`, tint: tints[index % tints.length] };
+  }),
+}));
