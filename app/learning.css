@@ -1,0 +1,162 @@
+.save-note {
+  font-size: 14px;
+  color: #596e52;
+  margin: 16px 0;
+}
+.learning-steps {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+.learning-steps span {
+  background: #e9efe4;
+  color: #617459;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+.learning-steps .active {
+  background: #2e744d;
+  color: white;
+  font-weight: 700;
+}
+.image-game {
+  background: white;
+  border: 1px solid #e3eadd;
+  border-radius: 28px;
+  padding: 28px;
+  text-align: center;
+  box-shadow: 0 8px 0 #eaf0e3;
+}
+.image-game > p {
+  color: #53684a;
+  line-height: 1.6;
+}
+.listen-prompt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #e3efda;
+  color: #245b40;
+  border: 2px solid #b4cd9b;
+  border-radius: 22px;
+  padding: 20px 26px;
+  min-height: 86px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.picture-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 690px;
+  margin: 25px auto;
+}
+.picture-option {
+  position: relative;
+  border: 3px solid #e1e9d9;
+  background: #f9fbf7;
+  border-radius: 23px;
+  padding: 10px;
+}
+.picture-option img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  user-select: none;
+}
+.picture-option > span {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #556b48;
+  background: #e6eedf;
+}
+.picture-option:disabled {
+  opacity: 0.68;
+}
+.picture-option.correct {
+  border-color: #52944c;
+  background: #eaf7e5;
+  opacity: 1;
+}
+.picture-option.wrong {
+  border-color: #c89036;
+  background: #fff4e6;
+}
+.result-note {
+  padding: 13px;
+  border-radius: 14px;
+  color: #596e52;
+  font-size: 16px;
+}
+.result-note.correct {
+  background: #eaf7e5;
+  color: #28622f;
+}
+.result-note.wrong {
+  background: #fff4e6;
+  color: #875816;
+}
+.image-game .next-button {
+  max-width: 420px;
+  margin: 20px auto 0;
+}
+.revealed-word {
+  font-size: 22px;
+}
+.learning-v2 .sound-option,
+.learning-v2 .sound-option * {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.learning-v2 .sound-option {
+  cursor: grab;
+}
+.learning-v2 .sound-option > * {
+  pointer-events: none;
+}
+.learning-v2 .title-row h1 {
+  font-size: clamp(23px, 4vw, 30px);
+}
+.learning-v2 .gentle-note {
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  .learning-steps {
+    gap: 5px;
+  }
+  .learning-steps span {
+    padding: 9px 10px;
+    font-size: 14px;
+  }
+  .image-game {
+    padding: 20px 12px;
+  }
+  .picture-options {
+    gap: 8px;
+  }
+  .picture-option {
+    padding: 5px;
+    border-radius: 17px;
+  }
+  .listen-prompt {
+    font-size: 18px;
+    padding: 17px;
+  }
+  .learning-v2 .top-actions,
+  .learning-v2 .lesson-top {
+    flex-wrap: wrap;
+  }
+  .learning-v2 .title-row {
+    align-items: start;
+  }
+}

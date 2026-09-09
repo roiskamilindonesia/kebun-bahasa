@@ -30,6 +30,7 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm test
       - run: node scripts/build-github-pages.mjs
       - uses: actions/upload-pages-artifact@v3
         with:
