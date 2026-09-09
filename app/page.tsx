@@ -6,6 +6,7 @@ import { ArrowRight, Check, CircleHelp, Grip, Headphones, Leaf, RotateCcw, Spark
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
+import { vocabularyThemes, vocabularyCount } from './vocabulary';
 
 const fruits = [
   { id:'grape', idn:'Anggur', en:'Grape', ar:'عِنَب', roman:'‘Inab', tint:'#f0e9fa' },
@@ -28,6 +29,8 @@ export default function Home() {
   const [playing,setPlaying] = useState<string|null>(null);
   const [audioError,setAudioError] = useState(false);
   const [help,setHelp] = useState(false);
+  const [catalogOpen,setCatalogOpen] = useState(false);
+  const [catalogTheme,setCatalogTheme] = useState('fruit');
   const [over,setOver] = useState(false);
   const [drag,setDrag] = useState<{index:number,x:number,y:number}|null>(null);
   const liveState = useRef({ language, round, phase, feedback });
@@ -106,7 +109,7 @@ export default function Home() {
   return <div className={`app-shell phase-${phase}`}>
     <header className="topbar"><a className="brand" href="/" aria-label="Kebun Kata, halaman awal"><span className="brand-icon"><Sprout size={27}/></span><span>Kebun<span className="brand-light">Kata</span><small>TUMBUH BERSAMA KATA</small></span></a><button className="help-button" onClick={()=>setHelp(true)}><CircleHelp size={20}/><span>Panduan</span></button></header>
     <main className="main">
-      <div className="lesson-top"><div className="lesson-label"><span className="tiny-leaf"><Leaf size={16}/></span> KELOMPOK 01 <span className="divider">/</span> Buah-buahan</div><Tabs value={language} onValueChange={v=>reset(v as 'en'|'ar')}><TabsList className="language-tabs" aria-label="Bahasa belajar"><TabsTrigger value="en">Aa <span>Inggris</span></TabsTrigger><TabsTrigger value="ar"><span lang="ar">ع</span> <span>Arab</span></TabsTrigger></TabsList></Tabs></div>
+      <div className="lesson-top"><div className="lesson-label"><span className="tiny-leaf"><Leaf size={16}/></span> KELOMPOK 01 <span className="divider">/</span> Buah-buahan</div><div className="top-actions"><button className="catalog-button" onClick={()=>setCatalogOpen(true)}><Sparkles size={16}/> {vocabularyCount} kata</button><Tabs value={language} onValueChange={v=>reset(v as 'en'|'ar')}><TabsList className="language-tabs" aria-label="Bahasa belajar"><TabsTrigger value="en">Aa <span>Inggris</span></TabsTrigger><TabsTrigger value="ar"><span lang="ar">ع</span> <span>Arab</span></TabsTrigger></TabsList></Tabs></div></div>
       <div className="progress-row"><Progress value={completed/6*100} aria-label={`${completed} dari 6 buah selesai`} className="lesson-progress"/><span><Star size={17} fill="#f5bb3f" stroke="#b47a09"/> {completed}<span className="muted">/ 6</span></span></div>
       {phase==='done'? <section className="celebration"><div className="trophy"><Star size={68} fill="currentColor"/></div><span className="eyebrow">KEBUN KATAMU BERTUMBUH!</span><h1>Hebat, kamu sudah belajar<br/>6 nama buah!</h1><p>Setiap usaha adalah langkah baru. Terima kasih sudah mencoba!</p><div className="harvest">{fruits.map(f=><img key={f.id} src={`/fruits/${f.id}.webp`} alt={f.idn}/>)}</div><button className="primary" onClick={()=>reset()}><RotateCcw size={19}/> Main lagi</button><button className="text-button" onClick={()=>reset(language==='en'?'ar':'en')}>Coba bahasa {language==='en'?'Arab':'Inggris'} <ArrowRight size={18}/></button></section> : <>
       <div className="title-row"><div><span className="eyebrow">PETUALANGAN KECIL, KATA BARU</span><h1>{phase==='learn'?'Yuk, kenalan dengan buah!':'Suara mana yang cocok?'}</h1></div><span className="round-label">Buah {round+1} <span>dari 6</span></span></div>
@@ -131,5 +134,6 @@ export default function Home() {
     <footer><span><Sprout size={16}/> Sedikit bermain, banyak belajar.</span><span>Inggris & Arab · Tanpa iklan</span></footer>
     {drag&&<div className="drag-ghost" style={{left:drag.x,top:drag.y}}><Volume2 size={25}/><b>Suara {drag.index+1}</b></div>}
     <Dialog open={help} onOpenChange={setHelp}><DialogContent className="guide" showCloseButton={false}><div className="guide-heading"><DialogTitle>Panduan teman belajar</DialogTitle><DialogClose aria-label="Tutup panduan" className="close-guide"><X size={20}/></DialogClose></div><DialogDescription>Dampingi si kecil, ikuti rasa ingin tahunya.</DialogDescription><ol><li><b>Dengarkan.</b> Sentuh gambar buah dan tirukan suaranya bersama.</li><li><b>Cocokkan.</b> Dengarkan tiga pilihan, lalu geser pilihan ke kotak. Bisa juga ketuk pilihan, lalu ketuk kotak.</li><li><b>Coba lagi.</b> Jawaban yang belum cocok boleh diulang. Tidak ada batas waktu atau pengurangan bintang.</li></ol><p>Pilih Inggris atau Arab di atas. Mengganti bahasa memulai sesi baru. Suara kosakata dan umpan balik sudah disertakan; aplikasi tidak memakai mikrofon atau merekam suara anak.</p><DialogClose className="primary">Yuk, bermain <ArrowRight size={18}/></DialogClose></DialogContent></Dialog>
+    <Dialog open={catalogOpen} onOpenChange={setCatalogOpen}><DialogContent className="catalog-dialog" showCloseButton={false}><div className="guide-heading"><div><DialogTitle>Perpustakaan kata</DialogTitle><DialogDescription>{vocabularyCount} kosakata dalam 11 tema</DialogDescription></div><DialogClose aria-label="Tutup perpustakaan" className="close-guide"><X size={20}/></DialogClose></div><div className="theme-grid">{vocabularyThemes.map(theme=><button key={theme.id} className={`theme-card ${catalogTheme===theme.id?'active':''}`} onClick={()=>setCatalogTheme(theme.id)}><span>{theme.emoji}</span><strong>{theme.title}</strong><small>{theme.words.length} kata</small></button>)}</div><div className="word-list"><h3>{vocabularyThemes.find(theme=>theme.id===catalogTheme)?.title}</h3><div className="word-chips">{vocabularyThemes.find(theme=>theme.id===catalogTheme)?.words.map((word,index)=><span key={`${word}-${index}`}>{index+1}. {word}</span>)}</div></div></DialogContent></Dialog>
   </div>;
 }
