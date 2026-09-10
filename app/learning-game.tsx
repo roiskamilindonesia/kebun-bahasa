@@ -53,6 +53,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   const [help, setHelp] = useState(false);
   const [catalog, setCatalog] = useState(false);
   const [theme, setTheme] = useState('fruit');
+  const [listenTouches, setListenTouches] = useState(0);
   const [drag, setDrag] = useState<{
     slot: number;
     x: number;
@@ -125,6 +126,10 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     }
   }, [session, language]);
 
+  useEffect(() => {
+    setListenTouches(0);
+  }, [language, session?.themeId, session?.lesson, session?.cursor, session?.phase]);
+
   function stopAudio() {
     if (audio.current) {
       audio.current.pause();
@@ -155,6 +160,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   }
   function hearWord() {
     if (!session) return;
+    setListenTouches((count) => Math.min(10, count + 1));
     play(
       `${words[session.queue[session.cursor]].audio}-${language}`,
       'word',
@@ -556,6 +562,24 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                       <Volume2 size={25} />
                     </span>
                   </button>
+                  {s.phase === 'learn' && (
+                    <div
+                      className="touch-practice"
+                      aria-label={`${listenTouches} dari 10 sentuhan selesai`}
+                    >
+                      <span>Sentuh 10 kali</span>
+                      <div className="touch-moons" aria-hidden="true">
+                        {Array.from({ length: 10 }, (_, index) => (
+                          <i
+                            key={index}
+                            className={index < listenTouches ? 'done' : ''}
+                          >
+                            {index < listenTouches && <Check size={13} />}
+                          </i>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="word-caption">
                     <strong
                       lang={language}
@@ -589,7 +613,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                       </p>
                       <button
                         className="primary"
-                        disabled={!s.heard}
+                        disabled={!s.heard || listenTouches < 10}
                         onClick={() => {
                           stopAudio();
                           changed({ phase: 'sound' });
@@ -599,8 +623,10 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                       </button>
                       <span className="gentle-note">
                         {s.heard
-                          ? 'Sudah siap? Yuk, coba!'
-                          : 'Dengarkan sampai selesai, lalu lanjut.'}
+                          ? listenTouches < 10
+                            ? `Ayo sentuh gambar ${10 - listenTouches} kali lagi.`
+                            : 'Hebat, kamu sudah siap!'
+                          : 'Sentuh gambar 10 kali dan dengarkan sampai selesai.'}
                       </span>
                     </div>
                   ) : (

@@ -19,6 +19,33 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.touch-practice {
+  width: min(255px, 100%);
+  margin: 18px auto 0;
+  color: #55704b;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+.touch-moons {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 9px;
+}
+.touch-moons i {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 2px solid #c9d9bf;
+  border-radius: 50%;
+  background: #f7faf4;
+  color: white;
+}
+.touch-moons i.done {
+  border-color: #4e994f;
+  background: #68ad55;
+}
 .picture-option > .word-art {
   display: block;
   width: 100%;
