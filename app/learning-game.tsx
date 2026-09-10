@@ -30,8 +30,8 @@ import { Progress } from '../components/ui/progress';
 import { vocabularyThemes, vocabularyCount } from './vocabulary';
 import {
   words,
+  themes,
   newSession,
-  restore,
   submit,
   advance,
   startImages,
@@ -40,7 +40,8 @@ import {
 } from './learning';
 import './learning.css';
 
-const storageKey = (lang: Language) => `kebun-kata:learning-v1:${lang}`;
+import { storageKey, readSaved } from './learning-storage';
+import { WordArt } from './word-art';
 
 export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   const [language, setLanguage] = useState<Language>('en');
@@ -75,14 +76,32 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   useEffect(() => {
     let lang: Language = 'en',
       saved: Session | null = null;
+    let themeId = 'fruit',
+      lesson = 0;
     try {
       lang = localStorage.getItem('kebun-kata:language') === 'ar' ? 'ar' : 'en';
-      saved = restore(localStorage.getItem(storageKey(lang)));
+      const selected = JSON.parse(
+        localStorage.getItem('kebun-kata:selection') ?? 'null',
+      );
+      if (
+        selected &&
+        themes.some(
+          (t) =>
+            t.id === selected.themeId &&
+            Number.isInteger(selected.lesson) &&
+            t.lessons[selected.lesson],
+        )
+      ) {
+        themeId = selected.themeId;
+        lesson = selected.lesson;
+      }
+      saved = readSaved(localStorage, lang, themeId, lesson);
     } catch {
       setStorageError(true);
     }
     setLanguage(lang);
-    setSession(saved ?? newSession());
+    setSession(saved ?? newSession(undefined, themeId, lesson));
+    setTheme(themeId);
     setResumed(!!saved);
     return () => {
       audio.current?.pause();
@@ -92,7 +111,14 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   useEffect(() => {
     if (!session) return;
     try {
-      localStorage.setItem(storageKey(language), JSON.stringify(session));
+      localStorage.setItem(
+        storageKey(language, session.themeId, session.lesson),
+        JSON.stringify(session),
+      );
+      localStorage.setItem(
+        'kebun-kata:selection',
+        JSON.stringify({ themeId: session.themeId, lesson: session.lesson }),
+      );
       localStorage.setItem('kebun-kata:language', language);
     } catch {
       setStorageError(true);
@@ -129,8 +155,10 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   }
   function hearWord() {
     if (!session) return;
-    play(`${words[session.queue[session.cursor]].id}-${language}`, 'word', () =>
-      setSession((s) => (s ? { ...s, heard: true } : s)),
+    play(
+      `${words[session.queue[session.cursor]].audio}-${language}`,
+      'word',
+      () => setSession((s) => (s ? { ...s, heard: true } : s)),
     );
   }
   function answer(slot: number) {
@@ -227,8 +255,8 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     });
     return () => lifecycle.abort();
   }, []);
-  function changeLanguage(lang: Language) {
-    if (lang === language) return;
+  function selectLesson(themeId: string, lesson: number, lang = language) {
+    if (!themes.some((t) => t.id === themeId && t.lessons[lesson])) return;
     stopAudio();
     gesture.current = null;
     setDrag(null);
@@ -236,19 +264,24 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     setAudioError(false);
     let saved: Session | null = null;
     try {
-      // Flush the current session before switching so quick taps never lose progress.
       if (live.current)
         localStorage.setItem(
-          storageKey(language),
+          storageKey(language, live.current.themeId, live.current.lesson),
           JSON.stringify(live.current),
         );
-      saved = restore(localStorage.getItem(storageKey(lang)));
+      saved = readSaved(localStorage, lang, themeId, lesson);
     } catch {
       setStorageError(true);
     }
     setLanguage(lang);
-    setSession(saved ?? newSession());
+    setSession(saved ?? newSession(undefined, themeId, lesson));
+    setTheme(themeId);
+    setCatalog(false);
     setResumed(!!saved);
+  }
+  function changeLanguage(lang: Language) {
+    if (lang !== language && session)
+      selectLesson(session.themeId, session.lesson, lang);
   }
   function next() {
     stopAudio();
@@ -340,6 +373,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
           : 'Pelan-pelan saja. Kamu boleh mencoba lagi.'}
     </div>
   );
+  const activeTheme = themes.find((t) => t.id === s.themeId)!;
   const summary = s.phase === 'bridge' || s.phase === 'done';
   return (
     <div className={`app-shell learning-v2 phase-${s.phase}`}>
@@ -366,7 +400,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
       <main className="main">
         <div className="lesson-top">
           <div className="lesson-label">
-            <Leaf size={16} /> Buah-buahan · 6 kata
+            <Leaf size={16} /> {activeTheme.title} · {s.members.length} kata
           </div>
           <div className="top-actions">
             <button
@@ -376,7 +410,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                 setCatalog(true);
               }}
             >
-              {vocabularyCount} kata
+              Pilih tema · 11
             </button>
             <Tabs
               value={language}
@@ -391,6 +425,20 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
             </Tabs>
           </div>
         </div>
+        <nav className="lesson-picker" aria-label="Pilih sesi">
+          {activeTheme.lessons.map((members, i) => (
+            <button
+              key={i}
+              aria-pressed={s.lesson === i}
+              className={s.lesson === i ? 'active' : ''}
+              onClick={() => selectLesson(s.themeId, i)}
+              title={members.map((index) => words[index].idn).join(', ')}
+            >
+              Sesi {i + 1}
+              <small>{members.length} kata</small>
+            </button>
+          ))}
+        </nav>
         <p className="save-note" role="status">
           {storageError
             ? 'Progres belum bisa disimpan di browser ini. Kamu tetap bisa bermain.'
@@ -414,11 +462,11 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
             <div className="progress-row">
               <Progress
                 className="lesson-progress"
-                value={(completed / words.length) * 100}
-                aria-label={`${completed} dari 6 kata dilatih pada tahap ini`}
+                value={(completed / s.members.length) * 100}
+                aria-label={`${completed} dari ${s.members.length} kata dilatih pada tahap ini`}
               />
               <span>
-                <Star size={18} /> {completed} / 6
+                <Star size={18} /> {completed} / {s.members.length}
               </span>
             </div>
             <div className="title-row">
@@ -459,11 +507,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                       aria-label={`Pilih gambar ${slot + 1}`}
                       aria-pressed={s.selected === slot}
                     >
-                      <img
-                        src={`${basePath}/fruits/${words[index].id}.webp`}
-                        alt=""
-                        draggable={false}
-                      />
+                      <WordArt index={index} basePath={basePath} />
                       <span>{slot + 1}</span>
                     </button>
                   ))}
@@ -503,10 +547,10 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                     onClick={hearWord}
                     aria-label={`Dengarkan nama ${word.idn}`}
                   >
-                    <img
-                      src={`${basePath}/fruits/${word.id}.webp`}
-                      alt={word.idn}
-                      draggable={false}
+                    <WordArt
+                      index={s.queue[s.cursor]}
+                      basePath={basePath}
+                      label={word.idn}
                     />
                     <span className="fruit-sound">
                       <Volume2 size={25} />
@@ -519,11 +563,11 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                     >
                       {s.heard || playing === 'word'
                         ? word[language]
-                        : 'Ini buah apa, ya?'}
+                        : 'Ini apa, ya?'}
                     </strong>
                     <span>
                       {s.heard
-                        ? `${language === 'ar' ? word.roman + ' · ' : ''}${word.idn}`
+                        ? `${language === 'ar' && word.roman ? word.roman + ' · ' : ''}${word.idn}`
                         : 'Sentuh gambar untuk mendengar'}
                     </span>
                   </div>
@@ -579,7 +623,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                                 return;
                               changed({ selected: slot });
                               play(
-                                `${words[index].id}-${language}`,
+                                `${words[index].audio}-${language}`,
                                 `choice-${slot}`,
                               );
                             }}
@@ -653,16 +697,17 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
             </h1>
             <p>
               {s.phase === 'bridge'
-                ? 'Kamu sudah mencocokkan suara. Sekarang dengarkan satu kata, lalu pilih gambarnya tanpa melihat nama buah.'
+                ? 'Kamu sudah mencocokkan suara. Sekarang dengarkan satu kata, lalu pilih gambarnya tanpa melihat nama katanya.'
                 : 'Setiap usaha membuatmu semakin kenal kata. Kata yang masih sulit akan kita latih lagi di sesi berikutnya.'}
             </p>
             {s.phase === 'done' && (
               <div className="harvest">
-                {words.map((w) => (
-                  <img
-                    src={`${basePath}/fruits/${w.id}.webp`}
-                    alt={w.idn}
-                    key={w.id}
+                {s.members.map((index) => (
+                  <WordArt
+                    key={index}
+                    index={index}
+                    basePath={basePath}
+                    label={words[index].idn}
                   />
                 ))}
               </div>
@@ -673,15 +718,32 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                 stopAudio();
                 setResumed(false);
                 setSession(
-                  s.phase === 'bridge' ? startImages(s) : newSession(s.stats),
+                  s.phase === 'bridge'
+                    ? startImages(s)
+                    : newSession(s.stats, s.themeId, s.lesson),
                 );
               }}
             >
               {s.phase === 'bridge'
                 ? 'Ayo, temukan gambarnya'
-                : 'Main sesi baru'}{' '}
+                : 'Ulangi sesi ini'}{' '}
               <ArrowRight size={20} />
             </button>
+            {s.phase === 'done' && (
+              <button
+                className="text-button"
+                onClick={() => {
+                  if (s.lesson + 1 < activeTheme.lessons.length)
+                    selectLesson(s.themeId, s.lesson + 1);
+                  else setCatalog(true);
+                }}
+              >
+                {s.lesson + 1 < activeTheme.lessons.length
+                  ? 'Lanjut sesi berikutnya'
+                  : 'Pilih tema berikutnya'}{' '}
+                <ArrowRight size={18} />
+              </button>
+            )}
             <p className="gentle-note">
               Boleh istirahat. Progresmu tetap tersimpan di browser ini.
             </p>
@@ -751,9 +813,9 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
         <DialogContent className="catalog-dialog" showCloseButton={false}>
           <div className="guide-heading">
             <div>
-              <DialogTitle>Perpustakaan kata</DialogTitle>
+              <DialogTitle>Pilih tema bermain</DialogTitle>
               <DialogDescription>
-                {vocabularyCount} kosakata · Latihan aktif: 6 buah
+                {vocabularyCount} kosakata · 11 tema siap dimainkan
               </DialogDescription>
             </div>
             <DialogClose
@@ -778,6 +840,24 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
           </div>
           <div className="word-list">
             <h3>{vocabularyThemes.find((t) => t.id === theme)?.title}</h3>
+            <div className="theme-lessons">
+              {themes
+                .find((t) => t.id === theme)
+                ?.lessons.map((members, i) => (
+                  <button
+                    className="theme-lesson"
+                    key={i}
+                    onClick={() => selectLesson(theme, i)}
+                  >
+                    <strong>
+                      Main sesi {i + 1} <ArrowRight size={18} />
+                    </strong>
+                    <span>
+                      {members.map((index) => words[index].idn).join(' · ')}
+                    </span>
+                  </button>
+                ))}
+            </div>
             <div className="word-chips">
               {vocabularyThemes
                 .find((t) => t.id === theme)

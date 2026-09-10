@@ -1,53 +1,5 @@
-export const words = [
-  {
-    id: 'grape',
-    idn: 'Anggur',
-    en: 'Grape',
-    ar: 'عِنَب',
-    roman: '‘Inab',
-    tint: '#f0e9fa',
-  },
-  {
-    id: 'orange',
-    idn: 'Jeruk',
-    en: 'Orange',
-    ar: 'بُرْتُقَال',
-    roman: 'Burtuqāl',
-    tint: '#fff0d8',
-  },
-  {
-    id: 'mango',
-    idn: 'Mangga',
-    en: 'Mango',
-    ar: 'مَانْجُو',
-    roman: 'Mānjū',
-    tint: '#fff1d8',
-  },
-  {
-    id: 'apple',
-    idn: 'Apel',
-    en: 'Apple',
-    ar: 'تُفَّاح',
-    roman: 'Tuffāḥ',
-    tint: '#ffebeb',
-  },
-  {
-    id: 'banana',
-    idn: 'Pisang',
-    en: 'Banana',
-    ar: 'مَوْز',
-    roman: 'Mawz',
-    tint: '#fff5d2',
-  },
-  {
-    id: 'strawberry',
-    idn: 'Stroberi',
-    en: 'Strawberry',
-    ar: 'فَرَاوِلَة',
-    roman: 'Farāwilah',
-    tint: '#ffebee',
-  },
-];
+import { words, lessonMembers, themes } from './lesson-catalog.ts';
+export { words, themes, lessonMembers };
 export type Language = 'en' | 'ar';
 export type Phase = 'learn' | 'sound' | 'bridge' | 'image' | 'done';
 export type Stat = {
@@ -57,7 +9,10 @@ export type Stat = {
   needsPractice: boolean;
 };
 export type Session = {
-  version: 1;
+  version: 2;
+  themeId: string;
+  lesson: number;
+  members: number[];
   phase: Phase;
   queue: number[];
   cursor: number;
@@ -77,44 +32,58 @@ export function shuffle<T>(items: T[], random = Math.random): T[] {
   }
   return result;
 }
-export function optionsFor(word: number, random = Math.random) {
+export function optionsFor(
+  word: number,
+  random = Math.random,
+  members = lessonMembers(),
+) {
   return shuffle(
     [
       word,
       ...shuffle(
-        words.map((_, i) => i).filter((i) => i !== word),
+        members.filter((i) => i !== word),
         random,
       ).slice(0, 2),
     ],
     random,
   );
 }
-export function newSession(previous?: Stat[]): Session {
+export function newSession(
+  previous?: Stat[],
+  themeId = 'fruit',
+  lesson = 0,
+): Session {
+  const members = lessonMembers(themeId, lesson);
   // Start the next session with words that still need practice.
-  const queue = shuffle(words.map((_, i) => i)).sort(
+  const queue = shuffle(members).sort(
     (a, b) =>
       Number(previous?.[b]?.needsPractice ?? false) -
       Number(previous?.[a]?.needsPractice ?? false),
   );
   return {
-    version: 1,
+    version: 2,
+    themeId,
+    lesson,
+    members,
     phase: 'learn',
     queue,
     cursor: 0,
-    options: optionsFor(queue[0]),
+    options: optionsFor(queue[0], Math.random, members),
     heard: false,
     selected: null,
     feedback: 'idle',
     missed: false,
     reviews: [],
-    stats:
-      previous?.map((s) => ({ ...s })) ??
-      words.map(() => ({
-        attempts: 0,
-        correct: 0,
-        firstTry: 0,
-        needsPractice: false,
-      })),
+    stats: words.map((_, i) =>
+      previous?.[i]
+        ? { ...previous[i] }
+        : {
+            attempts: 0,
+            correct: 0,
+            firstTry: 0,
+            needsPractice: false,
+          },
+    ),
   };
 }
 export function submit(session: Session, slot: number): Session {
@@ -144,7 +113,11 @@ export function submit(session: Session, slot: number): Session {
     reviews.push(word);
     // Always interleave another word, even if the error occurs at the end.
     if (session.cursor === queue.length - 1)
-      queue.push((word + 1) % words.length);
+      queue.push(
+        session.members[
+          (session.members.indexOf(word) + 1) % session.members.length
+        ],
+      );
     queue.splice(Math.min(session.cursor + 3, queue.length), 0, word);
   }
   return {
@@ -166,7 +139,7 @@ export function advance(session: Session): Session {
     ...session,
     cursor,
     phase: session.phase === 'image' ? 'image' : 'learn',
-    options: optionsFor(session.queue[cursor]),
+    options: optionsFor(session.queue[cursor], Math.random, session.members),
     heard: false,
     selected: null,
     feedback: 'idle',
@@ -174,32 +147,62 @@ export function advance(session: Session): Session {
   };
 }
 export function startImages(session: Session): Session {
-  const queue = shuffle(words.map((_, i) => i));
+  const members = session.members;
+  const queue = shuffle(members);
   return {
     ...session,
     phase: 'image',
     queue,
     cursor: 0,
     reviews: [],
-    options: optionsFor(queue[0]),
+    options: optionsFor(queue[0], Math.random, members),
     heard: false,
     selected: null,
     feedback: 'idle',
     missed: false,
   };
 }
-export function restore(raw: string | null): Session | null {
+export function restore(
+  raw: string | null,
+  themeId = 'fruit',
+  lesson = 0,
+): Session | null {
   try {
-    const s = JSON.parse(raw ?? 'null') as Session;
+    let s = JSON.parse(raw ?? 'null');
+    if (
+      s?.version === 1 &&
+      themeId === 'fruit' &&
+      lesson === 0 &&
+      Array.isArray(s.stats) &&
+      s.stats.length === 6
+    ) {
+      s = {
+        ...s,
+        version: 2,
+        themeId,
+        lesson,
+        members: lessonMembers(),
+        stats: [...s.stats, ...newSession().stats.slice(6)],
+      };
+    }
+    const members = lessonMembers(themeId, lesson);
     const word = (x: unknown) =>
-      Number.isInteger(x) && Number(x) >= 0 && Number(x) < words.length;
+      Number.isInteger(x) &&
+      Number(x) >= 0 &&
+      Number(x) < words.length &&
+      members.includes(Number(x));
     if (
       !s ||
-      s.version !== 1 ||
+      s.version !== 2 ||
+      s.themeId !== themeId ||
+      s.lesson !== lesson ||
+      !themes.some((t) => t.id === themeId && t.lessons[lesson]) ||
+      !Array.isArray(s.members) ||
+      JSON.stringify(s.members) !== JSON.stringify(members) ||
       !['learn', 'sound', 'bridge', 'image', 'done'].includes(s.phase) ||
       !Array.isArray(s.queue) ||
-      s.queue.length < 6 ||
-      s.queue.length > 18 ||
+      s.queue.length < members.length ||
+      s.queue.length > members.length * 3 ||
       !s.queue.every(word) ||
       !Number.isInteger(s.cursor) ||
       s.cursor < 0 ||
@@ -210,7 +213,7 @@ export function restore(raw: string | null): Session | null {
       !s.options.every(word) ||
       !s.options.includes(s.queue[s.cursor]) ||
       !Array.isArray(s.reviews) ||
-      s.reviews.length > 6 ||
+      s.reviews.length > members.length ||
       new Set(s.reviews).size !== s.reviews.length ||
       !s.reviews.every(word) ||
       typeof s.heard !== 'boolean' ||
@@ -223,7 +226,7 @@ export function restore(raw: string | null): Session | null {
       !Array.isArray(s.stats) ||
       s.stats.length !== words.length ||
       s.stats.some(
-        (t) =>
+        (t: Stat) =>
           !t ||
           typeof t.needsPractice !== 'boolean' ||
           ![t.attempts, t.correct, t.firstTry].every(

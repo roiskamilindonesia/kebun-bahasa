@@ -1,4 +1,4 @@
-import { translations } from './translations';
+import { translations } from './translations.ts';
 
 export type VocabularyTheme = { id: string; title: string; emoji: string; words: string[] };
 
