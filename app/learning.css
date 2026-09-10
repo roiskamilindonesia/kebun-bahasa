@@ -16,7 +16,8 @@
 .fruit-button > .word-art {
   width: 100%;
   height: 100%;
-  border-radius: 22px;
+  border-radius: 50%;
+  overflow: hidden;
 }
 .picture-option > .word-art {
   display: block;
