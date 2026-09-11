@@ -70,27 +70,6 @@
   70% { transform: scale(1.18) rotate(5deg); }
   100% { transform: scale(1); }
 }
-.touch-reward {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 11px;
-  color: #2f7048;
-  animation: reward-in .35s ease-out both;
-}
-.touch-reward img {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
-.touch-reward strong {
-  font-size: 14px;
-}
-@keyframes reward-in {
-  from { transform: translateY(6px) scale(.95); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
-}
 .parent-toggle {
   min-height: 38px;
   padding: 7px 12px;
@@ -345,9 +324,6 @@
   }
   .touch-practice {
     margin-top: 14px;
-  }
-  .touch-reward {
-    margin-top: 8px;
   }
 }
 @media (max-width: 600px) {

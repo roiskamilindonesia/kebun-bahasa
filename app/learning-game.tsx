@@ -597,12 +597,6 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                           </i>
                         ))}
                       </div>
-                      {listenTouches === 10 && (
-                        <div className="touch-reward" role="status">
-                          <img src={`${basePath}/kiki-sprout.png`} alt="Kiki ikut senang" />
-                          <strong>Kiki bilang: hebat!</strong>
-                        </div>
-                      )}
                     </div>
                   )}
                   <div className="word-caption">
