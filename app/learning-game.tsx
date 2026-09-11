@@ -591,7 +591,9 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                             key={index}
                             className={index < listenTouches ? 'done' : ''}
                           >
-                            {index < listenTouches && <Check size={13} />}
+                            {index < listenTouches && (
+                              <Star size={20} fill="currentColor" strokeWidth={2.4} />
+                            )}
                           </i>
                         ))}
                       </div>

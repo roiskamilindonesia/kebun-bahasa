@@ -58,14 +58,11 @@
   display: grid;
   place-items: center;
   aspect-ratio: 1;
-  border: 2px solid #c9d9bf;
-  border-radius: 50%;
-  background: #f7faf4;
-  color: white;
+  color: #d5e3cd;
 }
 .touch-moons i.done {
-  border-color: #4e994f;
-  background: #68ad55;
+  color: #f2b941;
+  filter: drop-shadow(0 2px 0 #d99428);
   animation: moon-pop .3s ease-out both;
 }
 @keyframes moon-pop {
