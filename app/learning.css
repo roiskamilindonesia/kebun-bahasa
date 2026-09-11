@@ -19,6 +19,27 @@
   border-radius: 50%;
   overflow: hidden;
 }
+.fruit-button.touch-ready {
+  cursor: pointer;
+}
+.fruit-button.touch-ready::before {
+  content: '';
+  position: absolute;
+  inset: -11px;
+  border: 3px solid #9ac97b;
+  border-radius: 50%;
+  opacity: 0;
+  animation: invite-touch 2.15s ease-out infinite;
+  pointer-events: none;
+}
+.fruit-button.touch-ready.is-playing::before {
+  animation-duration: .8s;
+}
+@keyframes invite-touch {
+  0% { transform: scale(.92); opacity: 0; }
+  28% { opacity: .72; }
+  72%, 100% { transform: scale(1.13); opacity: 0; }
+}
 .touch-practice {
   width: min(255px, 100%);
   margin: 18px auto 0;
@@ -45,6 +66,62 @@
 .touch-moons i.done {
   border-color: #4e994f;
   background: #68ad55;
+  animation: moon-pop .3s ease-out both;
+}
+@keyframes moon-pop {
+  0% { transform: scale(.5) rotate(-16deg); }
+  70% { transform: scale(1.18) rotate(5deg); }
+  100% { transform: scale(1); }
+}
+.touch-reward {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 11px;
+  color: #2f7048;
+  animation: reward-in .35s ease-out both;
+}
+.touch-reward img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.touch-reward strong {
+  font-size: 14px;
+}
+@keyframes reward-in {
+  from { transform: translateY(6px) scale(.95); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.parent-toggle {
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid #d7e4d1;
+  border-radius: 999px;
+  background: #fff;
+  color: #537052;
+  font-size: 13px;
+  font-weight: 700;
+}
+.parent-panel {
+  margin: 14px 0 18px;
+  padding: 14px;
+  border: 1px solid #dce9d5;
+  border-radius: 18px;
+  background: #f7fbf3;
+}
+.parent-panel .top-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.parent-panel .lesson-picker {
+  margin-top: 13px;
+}
+.parent-panel .save-note {
+  margin: 12px 0 0;
 }
 .picture-option > .word-art {
   display: block;
@@ -243,6 +320,38 @@
 }
 .learning-v2 .gentle-note {
   font-size: 14px;
+}
+@media (max-width: 600px) {
+  .parent-panel .top-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .parent-panel .catalog-button,
+  .parent-panel .language-tabs {
+    width: 100%;
+  }
+  .parent-panel .language-tabs [data-slot='tabs-list'] {
+    width: 100%;
+  }
+  .parent-panel .language-tabs [data-slot='tabs-trigger'] {
+    flex: 1;
+  }
+  .learning-v2 .learn-content {
+    padding-top: 14px;
+  }
+  .learning-v2 .learn-content h2,
+  .learning-v2 .learn-content p {
+    display: none;
+  }
+  .learning-v2 .activity-side {
+    padding-top: 12px;
+  }
+  .touch-practice {
+    margin-top: 14px;
+  }
+  .touch-reward {
+    margin-top: 8px;
+  }
 }
 @media (max-width: 600px) {
   .learning-steps {

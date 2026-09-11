@@ -52,6 +52,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   const [playing, setPlaying] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [catalog, setCatalog] = useState(false);
+  const [parentTools, setParentTools] = useState(false);
   const [theme, setTheme] = useState('fruit');
   const [listenTouches, setListenTouches] = useState(0);
   const [drag, setDrag] = useState<{
@@ -282,6 +283,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     setLanguage(lang);
     setSession(saved ?? newSession(undefined, themeId, lesson));
     setTheme(themeId);
+    setParentTools(false);
     setCatalog(false);
     setResumed(!!saved);
   }
@@ -408,50 +410,61 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
           <div className="lesson-label">
             <Leaf size={16} /> {activeTheme.title} · {s.members.length} kata
           </div>
-          <div className="top-actions">
-            <button
-              className="catalog-button"
-              onClick={() => {
-                stopAudio();
-                setCatalog(true);
-              }}
-            >
-              Pilih tema · 11
-            </button>
-            <Tabs
-              value={language}
-              onValueChange={(v) => changeLanguage(v as Language)}
-            >
-              <TabsList className="language-tabs" aria-label="Bahasa belajar">
-                <TabsTrigger value="en">Inggris</TabsTrigger>
-                <TabsTrigger value="ar">
-                  Arab <span lang="ar">ع</span>
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </div>
+          <button
+            className="parent-toggle"
+            aria-expanded={parentTools}
+            onClick={() => setParentTools((open) => !open)}
+          >
+            {parentTools ? 'Tutup pilihan' : 'Untuk orang tua'}
+          </button>
         </div>
-        <nav className="lesson-picker" aria-label="Pilih sesi">
-          {activeTheme.lessons.map((members, i) => (
-            <button
-              key={i}
-              aria-pressed={s.lesson === i}
-              className={s.lesson === i ? 'active' : ''}
-              onClick={() => selectLesson(s.themeId, i)}
-              title={members.map((index) => words[index].idn).join(', ')}
-            >
-              Sesi {i + 1}
-              <small>{members.length} kata</small>
-            </button>
-          ))}
-        </nav>
-        <p className="save-note" role="status">
-          {storageError
-            ? 'Progres belum bisa disimpan di browser ini. Kamu tetap bisa bermain.'
-            : resumed
-              ? 'Selamat datang kembali! Yuk, lanjutkan dari sini.'
-              : 'Progres tersimpan otomatis di browser ini.'}
-        </p>
+        {parentTools && (
+          <section className="parent-panel" aria-label="Pilihan orang tua">
+            <div className="top-actions">
+              <button
+                className="catalog-button"
+                onClick={() => {
+                  stopAudio();
+                  setCatalog(true);
+                }}
+              >
+                Pilih tema · 11
+              </button>
+              <Tabs
+                value={language}
+                onValueChange={(v) => changeLanguage(v as Language)}
+              >
+                <TabsList className="language-tabs" aria-label="Bahasa belajar">
+                  <TabsTrigger value="en">Inggris</TabsTrigger>
+                  <TabsTrigger value="ar">
+                    Arab <span lang="ar">ع</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+            <nav className="lesson-picker" aria-label="Pilih sesi">
+              {activeTheme.lessons.map((members, i) => (
+                <button
+                  key={i}
+                  aria-pressed={s.lesson === i}
+                  className={s.lesson === i ? 'active' : ''}
+                  onClick={() => selectLesson(s.themeId, i)}
+                  title={members.map((index) => words[index].idn).join(', ')}
+                >
+                  Sesi {i + 1}
+                  <small>{members.length} kata</small>
+                </button>
+              ))}
+            </nav>
+            <p className="save-note" role="status">
+              {storageError
+                ? 'Progres belum bisa disimpan di browser ini. Kamu tetap bisa bermain.'
+                : resumed
+                  ? 'Selamat datang kembali! Yuk, lanjutkan dari sini.'
+                  : 'Progres tersimpan otomatis di browser ini.'}
+            </p>
+          </section>
+        )}
         <nav className="learning-steps" aria-label="Tahap belajar">
           <span className={s.phase === 'learn' ? 'active' : ''}>
             1 · Kenalan
@@ -549,7 +562,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                     <Headphones size={16} /> Sentuh & dengarkan
                   </span>
                   <button
-                    className={`fruit-button ${playing === 'word' ? 'is-playing' : ''}`}
+                    className={`fruit-button touch-ready ${playing === 'word' ? 'is-playing' : ''}`}
                     onClick={hearWord}
                     aria-label={`Dengarkan nama ${word.idn}`}
                   >
@@ -567,7 +580,11 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                       className="touch-practice"
                       aria-label={`${listenTouches} dari 10 sentuhan selesai`}
                     >
-                      <span>Sentuh 10 kali</span>
+                      <span>
+                        {listenTouches === 10
+                          ? 'Hebat! Sudah lengkap!'
+                          : `${10 - listenTouches} sentuhan lagi`}
+                      </span>
                       <div className="touch-moons" aria-hidden="true">
                         {Array.from({ length: 10 }, (_, index) => (
                           <i
@@ -578,6 +595,12 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
                           </i>
                         ))}
                       </div>
+                      {listenTouches === 10 && (
+                        <div className="touch-reward" role="status">
+                          <img src={`${basePath}/kiki-sprout.png`} alt="Kiki ikut senang" />
+                          <strong>Kiki bilang: hebat!</strong>
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="word-caption">
