@@ -165,11 +165,13 @@ export default function LearningGame({
     setPlaying(key);
     const fail = () => {
       if (audio.current !== clip) return;
+      audio.current = null;
       setPlaying(null);
       setAudioError(true);
     };
     clip.onended = () => {
       if (audio.current !== clip) return;
+      audio.current = null;
       setPlaying(null);
       done?.();
     };
@@ -177,7 +179,7 @@ export default function LearningGame({
     clip.play().catch(fail);
   }
   function hearWord() {
-    if (!session) return;
+    if (!session || audio.current) return;
     setListenTouches((count) => Math.min(10, count + 1));
     play(
       `${words[session.queue[session.cursor]].audio}-${language}`,
@@ -529,6 +531,7 @@ export default function LearningGame({
                 <button
                   className={`listen-prompt ${playing === 'word' ? 'is-playing' : ''}`}
                   onClick={hearWord}
+                  disabled={playing === 'word'}
                   aria-label="Dengarkan kata yang harus dicari"
                 >
                   <Volume2 size={36} />
@@ -565,8 +568,13 @@ export default function LearningGame({
                   </p>
                 )}
                 {correct && (
-                  <button className="primary next-button" onClick={next}>
-                    Lanjut <ArrowRight size={20} />
+                  <button
+                    className="primary next-button"
+                    onClick={next}
+                    disabled={playing === 'feedback'}
+                  >
+                    {playing === 'feedback' ? 'Dengarkan dulu…' : 'Lanjut'}{' '}
+                    <ArrowRight size={20} />
                   </button>
                 )}
               </section>
@@ -585,6 +593,7 @@ export default function LearningGame({
                   <button
                     className={`fruit-button touch-ready ${playing === 'word' ? 'is-playing' : ''}`}
                     onClick={hearWord}
+                    disabled={playing === 'word'}
                     aria-label={`Dengarkan nama ${word.idn}`}
                   >
                     <WordArt
@@ -612,9 +621,11 @@ export default function LearningGame({
                             key={index}
                             className={index < listenTouches ? 'done' : ''}
                           >
-                            {index < listenTouches && (
-                              <Star size={20} fill="currentColor" strokeWidth={2.4} />
-                            )}
+                            <Star
+                              size={20}
+                              fill={index < listenTouches ? 'currentColor' : 'none'}
+                              strokeWidth={index < listenTouches ? 2.4 : 1.8}
+                            />
                           </i>
                         ))}
                       </div>
@@ -740,8 +751,13 @@ export default function LearningGame({
                         </span>
                       </button>
                       {correct && (
-                        <button className="primary next-button" onClick={next}>
-                          Lanjut <ArrowRight size={20} />
+                        <button
+                          className="primary next-button"
+                          onClick={next}
+                          disabled={playing === 'feedback'}
+                        >
+                          {playing === 'feedback' ? 'Dengarkan dulu…' : 'Lanjut'}{' '}
+                          <ArrowRight size={20} />
                         </button>
                       )}
                     </div>

@@ -22,6 +22,9 @@
 .fruit-button.touch-ready {
   cursor: pointer;
 }
+.fruit-button.touch-ready:disabled {
+  cursor: wait;
+}
 .fruit-button.touch-ready::before {
   content: '';
   position: absolute;
@@ -58,10 +61,12 @@
   display: grid;
   place-items: center;
   aspect-ratio: 1;
-  color: #d5e3cd;
+  color: #bfc9c1;
+  opacity: .72;
 }
 .touch-moons i.done {
   color: #f2b941;
+  opacity: 1;
   filter: drop-shadow(0 2px 0 #d99428);
   animation: moon-pop .3s ease-out both;
 }
