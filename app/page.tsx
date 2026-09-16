@@ -62,7 +62,7 @@ export default function Home() {
             <div className="garden-card garden-card-main">
               <span className="garden-badge"><Headphones size={17} /> Sentuh &amp; dengarkan</span>
               <img src="/themes/fruit.png" alt="Ilustrasi tema buah-buahan" />
-              <div><strong>Anggur</strong><span>Grape · عِنَب</span></div>
+              <div><strong>Anggur</strong><span>Grape · Bahasa Inggris</span></div>
             </div>
             <div className="garden-card garden-card-small garden-one">
               <img src="/themes/mammals.png" alt="Ilustrasi tema binatang mamalia" />
