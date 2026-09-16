@@ -43,7 +43,7 @@ export default function Home() {
             <span className="hero-kicker"><Leaf size={16} /> Belajar lewat suara dan permainan</span>
             <h1>Kata baru tumbuh dari rasa ingin tahu.</h1>
             <p>
-              Temani anak mengenal kosakata bahasa Inggris dan Arab dengan cara
+              Temani anak mengenal kosakata bahasa Inggris dan Indonesia dengan cara
               yang sederhana: sentuh gambar, dengarkan, lalu cocokkan suaranya.
             </p>
             <div className="hero-actions">
@@ -77,7 +77,7 @@ export default function Home() {
 
         <section className="benefit-strip" aria-label="Manfaat utama">
           <div><Headphones /><span><strong>Suara yang jelas</strong>Didengar berulang kali</span></div>
-          <div><Languages /><span><strong>Inggris &amp; Arab</strong>Dalam satu aplikasi</span></div>
+          <div><Languages /><span><strong>Inggris &amp; Indonesia</strong>Dalam satu aplikasi</span></div>
           <div><ShieldCheck /><span><strong>Ramah anak</strong>Tanpa iklan mengganggu</span></div>
         </section>
 
@@ -119,7 +119,7 @@ export default function Home() {
             </p>
             <ul>
               <li><CheckCircle2 /> 200 kosakata bergambar</li>
-              <li><CheckCircle2 /> Pelafalan Inggris dan Arab</li>
+              <li><CheckCircle2 /> Pelafalan Inggris dan Indonesia</li>
               <li><CheckCircle2 /> Progres tersimpan di perangkat</li>
               <li><CheckCircle2 /> Latihan bisa diulang kapan saja</li>
             </ul>

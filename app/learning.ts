@@ -1,6 +1,6 @@
 import { words, lessonMembers, themes } from './lesson-catalog.ts';
 export { words, themes, lessonMembers };
-export type Language = 'en' | 'ar';
+export type Language = 'en' | 'idn';
 export type Phase = 'learn' | 'sound' | 'bridge' | 'image' | 'done';
 export type Stat = {
   attempts: number;

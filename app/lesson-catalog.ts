@@ -1,21 +1,16 @@
 import { lessonThemes } from './vocabulary.ts';
 
 const originals = ['grape', 'orange', 'mango', 'apple', 'banana', 'strawberry'];
-const roman = ['‘Inab', 'Burtuqāl', 'Mānjū', 'Tuffāḥ', 'Mawz', 'Farāwilah'];
 export const words = lessonThemes.flatMap((theme) =>
   theme.words.map((word, position) => ({
     ...word,
     themeId: theme.id,
     position,
-    audio:
-      theme.id === 'fruit' && position < 6
-        ? originals[position]
-        : `vocabulary/${word.id}`,
+    audio: `vocabulary/${word.id}`,
     image:
       theme.id === 'fruit' && position < 6
         ? `/fruits/${originals[position]}.webp`
         : null,
-    roman: theme.id === 'fruit' && position < 6 ? roman[position] : '',
   })),
 );
 export const themes = lessonThemes.map((theme) => {

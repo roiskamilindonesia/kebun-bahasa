@@ -151,11 +151,11 @@ test('language, theme and lesson progress are isolated; old fruit saves migrate'
   const fruit = newSession();
   const vegetables = newSession(undefined, 'vegetables', 1);
   map.set(storageKey('en', 'fruit', 0), JSON.stringify(fruit));
-  map.set(storageKey('ar', 'vegetables', 1), JSON.stringify(vegetables));
+  map.set(storageKey('idn', 'vegetables', 1), JSON.stringify(vegetables));
   assert.deepEqual(readSaved(storage, 'en'), fruit);
-  assert.deepEqual(readSaved(storage, 'ar', 'vegetables', 1), vegetables);
+  assert.deepEqual(readSaved(storage, 'idn', 'vegetables', 1), vegetables);
   assert.equal(readSaved(storage, 'en', 'vegetables', 1), null);
-  assert.equal(readSaved(storage, 'ar', 'vegetables', 0), null);
+  assert.equal(readSaved(storage, 'idn', 'vegetables', 0), null);
   assert.equal(restore(JSON.stringify(vegetables), 'home', 1), null);
   const legacy = { ...fruit, version: 1, stats: fruit.stats.slice(0, 6) };
   map.delete(storageKey('en'));
@@ -169,7 +169,7 @@ test('language, theme and lesson progress are isolated; old fruit saves migrate'
 
 test('all vocabulary recordings are present and have WAV audio data', () => {
   for (const word of words)
-    for (const lang of ['en', 'ar']) {
+    for (const lang of ['en', 'id']) {
       const file = new URL(
         `../public/audio/${word.audio}-${lang}.wav`,
         import.meta.url,

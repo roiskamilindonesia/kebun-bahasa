@@ -98,7 +98,7 @@ export default function LearningGame({
     let themeId = 'fruit',
       lesson = 0;
     try {
-      lang = localStorage.getItem('kebun-kata:language') === 'ar' ? 'ar' : 'en';
+      lang = localStorage.getItem('kebun-kata:language') === 'idn' ? 'idn' : 'en';
       const selected = JSON.parse(
         localStorage.getItem('kebun-kata:selection') ?? 'null',
       );
@@ -182,7 +182,7 @@ export default function LearningGame({
     if (!session || audio.current) return;
     setListenTouches((count) => Math.min(10, count + 1));
     play(
-      `${words[session.queue[session.cursor]].audio}-${language}`,
+      `${words[session.queue[session.cursor]].audio}-${language === 'en' ? 'en' : 'id'}`,
       'word',
       () => setSession((s) => (s ? { ...s, heard: true } : s)),
     );
@@ -459,9 +459,7 @@ export default function LearningGame({
               >
                 <TabsList className="language-tabs" aria-label="Bahasa belajar">
                   <TabsTrigger value="en">Inggris</TabsTrigger>
-                  <TabsTrigger value="ar">
-                    Arab <span lang="ar">ع</span>
-                  </TabsTrigger>
+                  <TabsTrigger value="idn">Indonesia</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>
@@ -560,7 +558,6 @@ export default function LearningGame({
                   <p className="revealed-word">
                     <strong
                       lang={language}
-                      dir={language === 'ar' ? 'rtl' : undefined}
                     >
                       {word[language]}
                     </strong>{' '}
@@ -634,7 +631,6 @@ export default function LearningGame({
                   <div className="word-caption">
                     <strong
                       lang={language}
-                      dir={language === 'ar' ? 'rtl' : undefined}
                     >
                       {s.heard || playing === 'word'
                         ? word[language]
@@ -642,7 +638,7 @@ export default function LearningGame({
                     </strong>
                     <span>
                       {s.heard
-                        ? `${language === 'ar' && word.roman ? word.roman + ' · ' : ''}${word.idn}`
+                        ? word.idn
                         : 'Sentuh gambar untuk mendengar'}
                     </span>
                   </div>
@@ -700,7 +696,7 @@ export default function LearningGame({
                                 return;
                               changed({ selected: slot });
                               play(
-                                `${words[index].audio}-${language}`,
+                                `${words[index].audio}-${language === 'en' ? 'en' : 'id'}`,
                                 `choice-${slot}`,
                               );
                             }}
@@ -776,12 +772,12 @@ export default function LearningGame({
             <h1>Anak sudah menyelesaikan satu sesi!</h1>
             <p>
               Buka seluruh 200 kosakata, 11 tema, serta pilihan bahasa Inggris
-              dan Arab dengan membeli akses Kebun Kata.
+              dan Indonesia dengan membeli akses Kebun Kata.
             </p>
             <div className="paywall-points">
               <span><Check size={18} /> 200 kosakata bergambar</span>
               <span><Check size={18} /> 11 tema sehari-hari</span>
-              <span><Check size={18} /> Inggris dan Arab</span>
+              <span><Check size={18} /> Inggris dan Indonesia</span>
             </div>
             <a className="primary paywall-buy" href="/masuk">
               <ShoppingBag size={20} /> Beli Produk
@@ -911,7 +907,7 @@ export default function LearningGame({
             pada sesi berikutnya.
           </p>
           <p>
-            Progres Inggris dan Arab tersimpan terpisah di browser ini. Progres
+            Progres Inggris dan Indonesia tersimpan terpisah di browser ini. Progres
             tidak berpindah antarperangkat atau alamat situs dan dapat hilang
             jika data browser dihapus. Tidak menggunakan mikrofon.
           </p>
