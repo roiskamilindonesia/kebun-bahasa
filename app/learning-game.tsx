@@ -12,6 +12,8 @@ import {
   Grip,
   Headphones,
   Leaf,
+  LockKeyhole,
+  ShoppingBag,
   Sprout,
   Star,
   Volume2,
@@ -43,7 +45,13 @@ import './learning.css';
 import { storageKey, readSaved } from './learning-storage';
 import { WordArt } from './word-art';
 
-export default function LearningGame({ basePath = '' }: { basePath?: string }) {
+export default function LearningGame({
+  basePath = '',
+  trial = false,
+}: {
+  basePath?: string;
+  trial?: boolean;
+}) {
   const [language, setLanguage] = useState<Language>('en');
   const [session, setSession] = useState<Session | null>(null);
   const [resumed, setResumed] = useState(false);
@@ -76,6 +84,15 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
   const suppressClickUntil = useRef(0);
 
   useEffect(() => {
+    if (trial) {
+      setLanguage('en');
+      setTheme('fruit');
+      setSession(newSession(undefined, 'fruit', 0));
+      setResumed(false);
+      return () => {
+        audio.current?.pause();
+      };
+    }
     let lang: Language = 'en',
       saved: Session | null = null;
     let themeId = 'fruit',
@@ -108,10 +125,10 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     return () => {
       audio.current?.pause();
     };
-  }, []);
+  }, [trial]);
 
   useEffect(() => {
-    if (!session) return;
+    if (!session || trial) return;
     try {
       localStorage.setItem(
         storageKey(language, session.themeId, session.lesson),
@@ -125,7 +142,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
     } catch {
       setStorageError(true);
     }
-  }, [session, language]);
+  }, [session, language, trial]);
 
   useEffect(() => {
     setListenTouches(0);
@@ -410,13 +427,17 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
           <div className="lesson-label">
             <Leaf size={16} /> {activeTheme.title} · {s.members.length} kata
           </div>
-          <button
-            className="parent-toggle"
-            aria-expanded={parentTools}
-            onClick={() => setParentTools((open) => !open)}
-          >
-            {parentTools ? 'Tutup pilihan' : 'Untuk orang tua'}
-          </button>
+          {trial ? (
+            <span className="trial-label">TRIAL GRATIS</span>
+          ) : (
+            <button
+              className="parent-toggle"
+              aria-expanded={parentTools}
+              onClick={() => setParentTools((open) => !open)}
+            >
+              {parentTools ? 'Tutup pilihan' : 'Untuk orang tua'}
+            </button>
+          )}
         </div>
         {parentTools && (
           <section className="parent-panel" aria-label="Pilihan orang tua">
@@ -730,7 +751,34 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
             )}
           </>
         )}
-        {summary && (
+        {summary && trial && s.phase === 'done' && (
+          <section className="celebration trial-paywall">
+            <div className="trophy paywall-lock">
+              <LockKeyhole size={52} />
+            </div>
+            <span className="trial-finished">TRIAL SELESAI</span>
+            <h1>Anak sudah menyelesaikan satu sesi!</h1>
+            <p>
+              Buka seluruh 200 kosakata, 11 tema, serta pilihan bahasa Inggris
+              dan Arab dengan membeli akses Kebun Kata.
+            </p>
+            <div className="paywall-points">
+              <span><Check size={18} /> 200 kosakata bergambar</span>
+              <span><Check size={18} /> 11 tema sehari-hari</span>
+              <span><Check size={18} /> Inggris dan Arab</span>
+            </div>
+            <a className="primary paywall-buy" href="/masuk">
+              <ShoppingBag size={20} /> Beli Produk
+            </a>
+            <a className="text-button" href="/">
+              Kembali ke beranda
+            </a>
+            <p className="gentle-note">
+              Setelah pembayaran, masukkan kode unik untuk membuka aplikasi.
+            </p>
+          </section>
+        )}
+        {summary && !(trial && s.phase === 'done') && (
           <section className="celebration">
             <div className="trophy">
               <Star size={60} fill="currentColor" />
@@ -805,7 +853,7 @@ export default function LearningGame({ basePath = '' }: { basePath?: string }) {
         <span>
           <Sprout size={16} /> Sedikit bermain, banyak belajar.
         </span>
-        <span>Tanpa akun · Tanpa iklan</span>
+          <span>{trial ? 'Trial gratis · Tanpa iklan' : 'Tanpa iklan'}</span>
       </footer>
       {drag && (
         <div

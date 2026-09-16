@@ -1,0 +1,40 @@
+.access-page {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 80px 20px 45px;
+  position: relative;
+  background:
+    radial-gradient(circle at 15% 15%, #e7f0c8 0 9%, transparent 28%),
+    radial-gradient(circle at 90% 85%, #f7e4b7 0 8%, transparent 28%),
+    #f8faf3;
+  color: #183d2e;
+}
+.access-page a { color: inherit; text-decoration: none; }
+.access-back { position: absolute; left: 5%; top: 28px; display: flex; align-items: center; gap: 7px; color: #5f7468 !important; font-weight: 750; }
+.access-card { width: min(520px, 100%); padding: 42px 44px; border: 1px solid #dde7d8; border-radius: 32px; background: rgba(255,255,255,.96); text-align: center; box-shadow: 0 10px 0 #e7eee0, 0 25px 70px rgba(31,76,51,.10); }
+.access-brand { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 35px; font-size: 22px; letter-spacing: -1px; }
+.access-brand > span { width: 43px; height: 43px; display: grid; place-items: center; border-radius: 14px; background: #e4f0cf; transform: rotate(-5deg); }
+.access-brand strong { font-weight: 900; }
+.access-icon { width: 68px; height: 68px; display: grid; place-items: center; margin: 0 auto 18px; border-radius: 22px; background: #e8f1d4; color: #356e4c; }
+.access-eyebrow { color: #74885f; font-size: 12px; font-weight: 900; letter-spacing: 2px; }
+.access-card h1 { margin: 9px 0 12px; color: #184c37; font-size: 36px; line-height: 1.1; letter-spacing: -1.5px; }
+.access-card > p { margin: 0 auto 28px; color: #607369; line-height: 1.65; }
+.access-card form { text-align: left; }
+.access-card label { display: block; margin-bottom: 9px; font-size: 14px; font-weight: 850; }
+.code-field { min-height: 58px; display: flex; align-items: center; gap: 10px; padding: 0 16px; border: 2px solid #d7e2d3; border-radius: 15px; background: #fbfcf8; color: #68806e; }
+.code-field:focus-within { border-color: #4e8a62; box-shadow: 0 0 0 4px #dcebdc; }
+.code-field input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #193e2f; font: inherit; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+.code-field input::placeholder { color: #a1aea5; font-size: 13px; font-weight: 650; }
+.access-card form button { width: 100%; min-height: 56px; margin-top: 14px; border: 0; border-radius: 15px; background: #184c37; color: white; font-weight: 900; box-shadow: 0 5px 0 #0e3626; }
+.access-card form button:disabled { background: #aab7ae; box-shadow: 0 5px 0 #89978e; }
+.access-notice { margin-top: 20px !important; padding: 14px 15px; border-radius: 13px; background: #fff5d7; color: #785d18 !important; font-size: 14px; text-align: left; line-height: 1.5 !important; }
+.purchase-note { margin-top: 28px; padding-top: 23px; border-top: 1px solid #e3e9df; display: flex; flex-direction: column; gap: 5px; color: #697b71; font-size: 14px; }
+.purchase-note strong { color: #314f40; }
+@media (max-width: 560px) {
+  .access-page { padding: 72px 14px 25px; align-items: start; }
+  .access-back { top: 21px; }
+  .access-card { padding: 32px 20px; border-radius: 25px; }
+  .access-brand { margin-bottom: 28px; }
+  .access-card h1 { font-size: 31px; }
+}

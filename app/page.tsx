@@ -33,7 +33,7 @@ export default function Home() {
         <nav aria-label="Navigasi utama">
           <a href="#cara-belajar">Cara belajar</a>
           <a href="#isi">Isi aplikasi</a>
-          <a className="nav-play" href="/belajar">Mulai belajar <ArrowRight size={17} /></a>
+          <a className="nav-play" href="/masuk">Beli Produk <ArrowRight size={17} /></a>
         </nav>
       </header>
 
@@ -47,8 +47,8 @@ export default function Home() {
               yang sederhana: sentuh gambar, dengarkan, lalu cocokkan suaranya.
             </p>
             <div className="hero-actions">
-              <a className="primary-cta" href="/belajar"><Play size={20} fill="currentColor" /> Buka aplikasi</a>
-              <a className="secondary-cta" href="#cara-belajar">Lihat cara belajar</a>
+              <a className="primary-cta" href="/belajar"><Play size={20} fill="currentColor" /> Coba Trial</a>
+              <a className="secondary-cta" href="/masuk">Sudah punya kode?</a>
             </div>
             <div className="hero-proof" aria-label="Ringkasan isi aplikasi">
               <span><strong>200</strong> kosakata</span>
@@ -138,7 +138,7 @@ export default function Home() {
             <h2>Mulai satu kata hari ini.</h2>
             <p>Sesi singkat, menyenangkan, dan nyaman dimainkan melalui hape.</p>
           </div>
-          <a href="/belajar">Mulai belajar <ArrowRight /></a>
+          <a href="/masuk">Beli Produk <ArrowRight /></a>
         </section>
       </main>
 

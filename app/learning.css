@@ -297,6 +297,65 @@
 .learning-v2 .gentle-note {
   font-size: 14px;
 }
+.trial-label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #fff0b5;
+  color: #765a08;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+.trial-paywall {
+  max-width: 720px;
+  margin: 20px auto 45px;
+  padding: 48px 44px;
+  border: 1px solid #dce6d6;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 10px 0 #e8efe2, 0 22px 60px rgba(35, 74, 51, .08);
+}
+.paywall-lock {
+  color: #356e4c;
+  background: #e8f1d4;
+}
+.trial-finished {
+  display: block;
+  margin: 19px 0 4px;
+  color: #72885d;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+.trial-paywall h1 { margin-top: 8px; }
+.paywall-points {
+  width: min(480px, 100%);
+  margin: 26px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.paywall-points span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 9px;
+  border-radius: 13px;
+  background: #f1f5ec;
+  color: #3f5f4a;
+  font-size: 13px;
+  font-weight: 750;
+}
+.paywall-points svg { flex: 0 0 auto; color: #4d8b55; }
+.paywall-buy {
+  width: min(360px, 100%);
+  margin: 0 auto 12px;
+  text-decoration: none;
+}
 @media (max-width: 700px) {
   .parent-panel .top-actions {
     align-items: stretch;
@@ -325,6 +384,8 @@
   .touch-practice {
     margin-top: 14px;
   }
+  .trial-paywall { padding: 35px 20px; }
+  .paywall-points { grid-template-columns: 1fr; }
 }
 @media (max-width: 600px) {
   .learning-steps {
