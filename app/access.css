@@ -29,6 +29,8 @@
 .access-card form button { width: 100%; min-height: 56px; margin-top: 14px; border: 0; border-radius: 15px; background: #184c37; color: white; font-weight: 900; box-shadow: 0 5px 0 #0e3626; }
 .access-card form button:disabled { background: #aab7ae; box-shadow: 0 5px 0 #89978e; }
 .access-notice { margin-top: 20px !important; padding: 14px 15px; border-radius: 13px; background: #fff5d7; color: #785d18 !important; font-size: 14px; text-align: left; line-height: 1.5 !important; }
+.access-error { background: #fff0ec; color: #9b3d2c !important; }
+.access-loading { padding: 18px 22px; border-radius: 16px; background: #fff; color: #355c47; font-weight: 850; box-shadow: 0 8px 30px rgba(31,76,51,.1); }
 .purchase-note { margin-top: 28px; padding-top: 23px; border-top: 1px solid #e3e9df; display: flex; flex-direction: column; gap: 5px; color: #697b71; font-size: 14px; }
 .purchase-note strong { color: #314f40; }
 @media (max-width: 560px) {

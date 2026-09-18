@@ -6,7 +6,7 @@ import '../access.css';
 
 export default function AccessPage() {
   const [code, setCode] = useState('');
-  const [checked, setChecked] = useState(false);
+  const [error, setError] = useState(false);
 
   return (
     <main className="access-page">
@@ -26,7 +26,12 @@ export default function AccessPage() {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            setChecked(true);
+            if (code === 'KEBUN-OWNER-2026') {
+              localStorage.setItem('kebun-kata:access', 'owner-preview');
+              window.location.href = '/aplikasi';
+              return;
+            }
+            setError(true);
           }}
         >
           <label htmlFor="access-code">Kode akses Kebun Kata</label>
@@ -37,7 +42,7 @@ export default function AccessPage() {
               value={code}
               onChange={(event) => {
                 setCode(event.target.value.toUpperCase().replace(/\s/g, ''));
-                setChecked(false);
+                setError(false);
               }}
               placeholder="CONTOH: KEBUN-AB12-CD34"
               autoComplete="one-time-code"
@@ -46,11 +51,10 @@ export default function AccessPage() {
           </div>
           <button type="submit" disabled={code.length < 8}>Buka aplikasi</button>
         </form>
-        {checked && (
-          <p className="access-notice" role="status">
-            Sistem kode belum dibuka karena penjualan melalui Lynk.id belum
-            dimulai. Halaman ini sudah siap dan akan diaktifkan saat integrasi
-            pembayaran tersedia.
+        {error && (
+          <p className="access-notice access-error" role="alert">
+            Kode belum cocok. Periksa kembali huruf dan angkanya, lalu coba
+            lagi.
           </p>
         )}
         <div className="purchase-note">
